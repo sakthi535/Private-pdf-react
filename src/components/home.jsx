@@ -53,11 +53,16 @@ import {
 } from "@chakra-ui/react"
 
 
-export default function SidebarWithHeader({ children, setSideBar, modalState }) {
+export default function SidebarWithHeader({ children, setSideBar, modalState, tokenConsumed, setTokenConsumed }) {
   // const [showModal, setShowModal] = useState(false)
 
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [activeIndex, setActiveIndex] = useState('');
+  const [token, setToken] = useState(0);
+
+  useEffect(() => {setToken(tokenConsumed)}, [tokenConsumed])
+
+  // setToken(tokenConsumed)
 
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
@@ -76,7 +81,7 @@ export default function SidebarWithHeader({ children, setSideBar, modalState }) 
         size="full"
       >
         <DrawerContent>
-          <SidebarContent onClose={onClose} activeIndex = {activeIndex} modalState = {modalState} setActiveIndex={(val) => { setActiveIndex(val); setSideBar(val) }} />
+          <SidebarContent onClose={onClose} tokenConsumed = {token} activeIndex = {activeIndex} modalState = {modalState} setActiveIndex={(val) => { setActiveIndex(val); setSideBar(val) }} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
@@ -95,6 +100,13 @@ const SidebarContent = ({ onClose, modalState, activeIndex, setActiveIndex, ...r
   const [inputState, setInputState] = useState(false);
   const [index, setIndex] = useState('');
   const [addIndex, setAddIndex] = useState('');
+  const [tokenConsumed, setTokenConsumed] = useState(0);
+  const [costConsumed, setCostConsumed] = useState(0);
+  
+  useEffect(() => {
+    setTokenConsumed(JSON.parse(localStorage.getItem('token-consumed')) ? JSON.parse(localStorage.getItem('token-consumed')) : 0);
+    setCostConsumed(JSON.parse(localStorage.getItem('cost-consumed')) ? JSON.parse(localStorage.getItem('cost-consumed')) : 0);
+  }, [])
 
 
   const [LinkItems, setLinkItems] = useState([
@@ -186,6 +198,15 @@ const SidebarContent = ({ onClose, modalState, activeIndex, setActiveIndex, ...r
         </>
 
       )}
+
+
+      <Button size='sm' type='text' mr={"6%"} ml={"6%"} mt={"3%"} position={'absolute'} left = {'15px'} bottom = {'50px'} onClick = {() => {console.log("Something here", tokenConsumed)}}>
+        Token : {tokenConsumed}
+      </Button>
+
+      <Button size='sm' type='text' mr={"6%"} ml={"6%"} mt={"3%"} left = {'15px'} bottom = {'10px'} position={'absolute'}>
+        Cost : Rs. {costConsumed.toFixed(3)}
+      </Button>
 
     </Box>
   )

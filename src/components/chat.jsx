@@ -8,6 +8,7 @@ import {
     AccordionButton,
     AccordionPanel,
     AccordionIcon,
+    Button,
     Box,
 } from '@chakra-ui/react'
 
@@ -24,6 +25,10 @@ import Typewriter from "typewriter-effect";
 function Chat({sideBar}) {
 
     const [inputState, setInputState] = useState(false)
+    
+    const [tokenConsumed, setTokenConsumed] = useState(0)
+    const [costConsumed, setCostConsumed] = useState(0)
+
 
     const [question, setQuestion] = useState('')
     // const [response, setResponse] = useState([{
@@ -81,11 +86,17 @@ function Chat({sideBar}) {
     }, [])
 
 
+    
+    useEffect(() => {if(tokenConsumed>0){localStorage.setItem('token-consumed', tokenConsumed)}}, [tokenConsumed]);
+    useEffect(() => {if(costConsumed>0){localStorage.setItem('cost-consumed', costConsumed)}}, [costConsumed]);
+
+
+    useEffect(() => {setTokenConsumed(parseInt(localStorage.getItem('token-consumed')))}, []);
+    useEffect(() => {setCostConsumed(parseFloat(localStorage.getItem('cost-consumed')))}, []);
+
 
     React.useEffect(() => {
         if(response.length > 0){
-            // var toStore = [...response];
-            // toStore[0]['state'] = 0;
             localStorage.setItem('chat-history', JSON.stringify(response));
         }
       }, [response]);
@@ -103,8 +114,10 @@ function Chat({sideBar}) {
         .then((resp) => {
             console.log(resp['data']);
             setResponse([
-                { question: question, answer: resp['data']['answer'], state: 1, source_documents: resp['data']['source_documents'], metadata: resp['data']['metadata'] }, ...response
+                { question: question, answer: resp['data']['answer'], state: 1, source_documents: resp['data']['source_documents'], metadata: resp['data']['metadata'], index : sideBar, cost : resp['data']['token']['total_cost'], token : resp['data']['token']['total_tokens'] }, ...response
             ])
+            setCostConsumed(costConsumed+resp['data']['token']['total_cost']*84)
+            setTokenConsumed(tokenConsumed+resp['data']['token']['total_tokens'])
         })
         .catch((error)=>{
             alert("Unable to process queries, please try again later");
@@ -116,11 +129,9 @@ function Chat({sideBar}) {
 
     const handleResponse = () => {
         setResponse([
-            { question: question, answer: '', state: 1, source_documents: [], metadata: {} }, ...response
+            { question: question, answer: '', state: 1, source_documents: [], metadata: {}, index : sideBar, cost : 0, token : 0  }, ...response
         ])
         sendQuestion(question)
-
-
         console.log(response)
     }
 
@@ -150,7 +161,7 @@ function Chat({sideBar}) {
                         <FiSend />
                     </InputRightElement>
 
-                    <Input placeholder={`Ask a question in ${sideBar.replace('_', ' ')}.. ?`} size='md' onKeyDown = {(e) => {if(e.key === "Enter"){handleResponse()}}} onChange={(e) => { console.log(e);setQuestion(e.target.value) }} disabled={inputState} style = {{outline: "0.25px solid #ccc",borderRadius: "16px", backgroundColor : "var(--chakra-colors-gray-100)" }}/>
+                    <Input placeholder={`Ask a question in ${sideBar.replaceAll('_', ' ')}.. ?`} size='md' onKeyDown = {(e) => {if(e.key === "Enter"){handleResponse()}}} onChange={(e) => { console.log(e);setQuestion(e.target.value) }} disabled={inputState} style = {{outline: "0.25px solid #ccc",borderRadius: "16px", backgroundColor : "var(--chakra-colors-gray-100)" }}/>
                 </InputGroup>
 
 
@@ -158,7 +169,7 @@ function Chat({sideBar}) {
 
                     {response.map(
                         (key, idx) => {
-                            if (key.state === 1 && key.index === sideBar) {
+                            if (key.state === 1) {
                                 console.log(key)
 
                                 return (
@@ -186,7 +197,6 @@ function Chat({sideBar}) {
                                                     .start();
                                             }}
                                         />
-
                                         <Accordion allowToggle mt = {"2.5%"}>
                                             <AccordionItem>
                                                 <h2>
@@ -213,11 +223,20 @@ function Chat({sideBar}) {
                                 )
                             }
                             else if(key.index === sideBar){
-
                                 return (
-
                                     <>
-                                        <Heading fontWeight="medium" fontSize={18} mt={"2.5%"} textAlign={"left"}>Q. {key.question} </Heading>
+                                        <Heading fontWeight="medium" fontSize={18} mt={"2.5%"} textAlign={"left"}>
+                                            Q. {key.question} 
+
+                                            <Button ml={"3"} size={'md'}>
+                                                Rs. {(key.cost*84).toFixed(3)}
+                                            </Button>
+
+                                            <Button ml={"3"} mr={"3"} size = {'md'}>
+                                                token : {key.token}
+                                            </Button>
+
+                                        </Heading>
                                         <Text size="sm" m={"2%"}>{key.answer}</Text>
 
                                         <Accordion allowToggle>
@@ -244,19 +263,9 @@ function Chat({sideBar}) {
                             }
                         }
                     )}
-
-
-
-
                 </div>
 
             </div>
-
-
-
-
-
-
         </div>
     );
 }
