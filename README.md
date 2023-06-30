@@ -36,6 +36,10 @@ Start the server
 
 Ensure the api endpoints match with address of flask server
 
+## Screenshots
+
+![Home screen](https://github.com/sakthi535/Private-pdf-react/blob/master/static/Home.png)
+![Upload files](https://github.com/sakthi535/Private-pdf-react/blob/master/static/Screenshot%202023-06-30%20105208.png)
 
 ## Authors
 
