@@ -122,7 +122,6 @@ const SidebarContent = ({ onClose, modalState, activeIndex, setActiveIndex, ...r
       .then((response) => {
         setLinkItems(response.data)
         // setActiveIndex(response.data[0])
-        console.log(response.data);
       })
       .catch((error) => {
         alert("Unable to get Indices, please check server status :(")
@@ -140,7 +139,6 @@ const SidebarContent = ({ onClose, modalState, activeIndex, setActiveIndex, ...r
     })
       .then((response) => {
         // setLinkItems(response.data)
-        console.log(response.data);
         if (response.status === 200) {
           setInputState(false)
         }
@@ -175,12 +173,11 @@ const SidebarContent = ({ onClose, modalState, activeIndex, setActiveIndex, ...r
 
         
         <NavItem key={link.name} icon={FiX} active={link.name === index} setInputState = {() => {setInputState(!inputState)}} onClick={() => { setActiveIndex(link.name); setIndex(link.name);}} justifyContent={"space-between"}>
-          {/* {console.log(link.name, ' ', index)} */}
             {(link.name.replaceAll('_', ' '))}
         </NavItem>
       ))}
       <hr />
-      <NavItem key={"Add a section"} icon={FiFilePlus} onClick={() => {setInputState(true); console.log(modalState)}} active={true} justifyContent={"space-between"}>
+      <NavItem key={"Add a section"} icon={FiFilePlus} onClick={() => {setInputState(true);}} active={true} justifyContent={"space-between"}>
         <div>
           {"Add a section"}
         </div>
@@ -213,7 +210,6 @@ const SidebarContent = ({ onClose, modalState, activeIndex, setActiveIndex, ...r
 }
 
 const NavItem = ({ icon, active, children, setInputState, ...rest }) => {
-  console.log("button ", active)
 
   const titleCaseString = (str) => {return str;}
 
@@ -224,19 +220,15 @@ const NavItem = ({ icon, active, children, setInputState, ...rest }) => {
         name: index,
         })
           .then((resp) => {
-            console.log(resp['data']);
             setInputState();
             alert("Index removed succesfully")
           })
           .catch((error) => {
-            console.log("files failed")
             alert("Failed to remove Index")
           });
       }
       
   }
-  console.log("something here")
-  console.log(children)
 
   
   return (
@@ -312,7 +304,6 @@ const MobileNav = ({ onOpen, activeIndex, ...rest }) => {
 
       reader.readAsBinaryString(file);
       reader.onload = () => {
-        console.log(file['name'])
         let b64payload = btoa(reader.result);
         axios.post('http://127.0.0.1:5000/addFiles', {
           dataType: "json",
@@ -321,12 +312,10 @@ const MobileNav = ({ onOpen, activeIndex, ...rest }) => {
           data: JSON.stringify({ "file": b64payload })
         })
           .then((resp) => {
-            console.log(resp['data']);
             alert("Files uploaded :)")
             setIsLoading(false)
           })
           .catch((error) => {
-            console.log("files failed")
             alert("Files failed to upload :(")
             setIsLoading(false)
           })

@@ -112,7 +112,6 @@ function Chat({sideBar}) {
             }
         })
         .then((resp) => {
-            console.log(resp['data']);
             setResponse([
                 { question: question, answer: resp['data']['answer'], state: 1, source_documents: resp['data']['source_documents'], metadata: resp['data']['metadata'], index : sideBar, cost : resp['data']['token']['total_cost'], token : resp['data']['token']['total_tokens'] }, ...response
             ])
@@ -132,7 +131,6 @@ function Chat({sideBar}) {
             { question: question, answer: '', state: 1, source_documents: [], metadata: {}, index : sideBar, cost : 0, token : 0  }, ...response
         ])
         sendQuestion(question)
-        console.log(response)
     }
 
     return (
@@ -161,7 +159,7 @@ function Chat({sideBar}) {
                         <FiSend />
                     </InputRightElement>
 
-                    <Input placeholder={`Ask a question in ${sideBar.replaceAll('_', ' ')}.. ?`} size='md' onKeyDown = {(e) => {if(e.key === "Enter"){handleResponse()}}} onChange={(e) => { console.log(e);setQuestion(e.target.value) }} disabled={inputState} style = {{outline: "0.25px solid #ccc",borderRadius: "16px", backgroundColor : "var(--chakra-colors-gray-100)" }}/>
+                    <Input placeholder={`Ask a question in ${sideBar.replaceAll('_', ' ')}.. ?`} size='md' onKeyDown = {(e) => {if(e.key === "Enter"){handleResponse()}}} onChange={(e) => { setQuestion(e.target.value) }} disabled={inputState} style = {{outline: "0.25px solid #ccc",borderRadius: "16px", backgroundColor : "var(--chakra-colors-gray-100)" }}/>
                 </InputGroup>
 
 
@@ -170,7 +168,6 @@ function Chat({sideBar}) {
                     {response.map(
                         (key, idx) => {
                             if (key.state === 1) {
-                                console.log(key)
 
                                 return (
                                     <>
@@ -191,7 +188,6 @@ function Chat({sideBar}) {
                                                         var toStore = [...response];
                                                         toStore[idx]['state'] = 0;
                                                         
-                                                        console.log(toStore)
                                                         setResponse(toStore)
                                                     })
                                                     .start();
