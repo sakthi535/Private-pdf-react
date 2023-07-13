@@ -153,7 +153,7 @@ function Chat({ sideBar }) {
             </Heading>
 
             <Button size='sm' type='text' mr={"6%"} ml={"0%"} mt={"3%"} position={'absolute'} left={'15px'} bottom={'50px'} onClick={() => { console.log("Something here", tokenConsumed) }}>
-                Token too much : {tokenConsumed}
+                Token : {tokenConsumed}
             </Button>
 
             <Button size='sm' type='text' mr={"6%"} ml={"0%"} mt={"3%"} left={'15px'} bottom={'10px'} position={'absolute'}>
@@ -236,12 +236,16 @@ function Chat({ sideBar }) {
                                                 Q. {key.question}
                                             </Text>
 
-                                            <Button ml={"3"} size={'md'}>
-                                                Rs. {(key.cost * 84).toFixed(3)}
+                                            <Button ml={"3"} size={'md'} style={{ fontSize: 'min(1.5vw, 16px)' }} display={{ base: "none", md: "block" }}>
+                                                <p>
+                                                    Rs. {(key.cost * 84).toFixed(3)}
+                                                </p>
                                             </Button>
 
-                                            <Button ml={"3"} mr={"3"} size={'md'}>
-                                                token : {key.token}
+                                            <Button ml={"3"} mr={"3"} size={'md'} style={{ fontSize: 'min(1.5vw, 16px)' }} display={{ base: "none", md: "block" }}>
+                                                <p>
+                                                    token : {key.token}
+                                                </p>
                                             </Button>
                                             <Spacer />
 

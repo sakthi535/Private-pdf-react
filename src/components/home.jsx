@@ -351,7 +351,7 @@ const MobileNav = ({ onOpen, modalState, activeIndex, ...rest }) => {
           aria-label="open menu"
           icon={<FiBell />}
         />
-        <Button for="file" isLoading = {isLoading} onClick={() => { modalState(); }} rightIcon={<FiUploadCloud />}>{`Add pdfs to ${activeIndex.replaceAll('_', ' ')}`}</Button>
+        <Button for="file" fontSize = {{base : "0", md : "16" }} isLoading = {isLoading} onClick={() => { modalState(); }} rightIcon={<FiUploadCloud />}>{`Add pdfs to ${activeIndex.replaceAll('_', ' ')}`}</Button>
         {/* <Input type='file' maxWidth={"250px"} id="filesToUpload" multiple onInput={(e) => { setFilesList(e.target.files) }} /> */}
         <Flex alignItems={"center"}>
           <Menu>

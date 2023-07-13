@@ -56,7 +56,7 @@ function App() {
         axios.post('http://127.0.0.1:5000/addFiles', {
           dataType: "json",
           name: formData['name'],
-          index: 'bse_intimations',
+          index: sideBar,
           data: JSON.stringify({ "file": b64payload })
         })
           .then((resp) => {
@@ -76,7 +76,7 @@ function App() {
 
   return (
     <div className="App">
-      <SidebarWithHeader setSideBar={(val) => setSideBar(val)} modalState={() => { onOpen(); }} tokenConsumed={tokenConsumed} setTokenConsumed={(val) => { setTokenConsumed(val) }}>
+      <SidebarWithHeader setSideBar={(val) => setSideBar(val)} modalState={(val) => { onOpen(); }} tokenConsumed={tokenConsumed} setTokenConsumed={(val) => { setTokenConsumed(val) }}>
         <Chat sideBar={sideBar} tokenConsumed={tokenConsumed} setTokenConsumed={(val) => { setTokenConsumed(val) }} />
 
         <Modal isOpen={isOpen} onClose={onClose}>
