@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react"
 import axios from 'axios'
 
-import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 
 import {
@@ -27,11 +26,9 @@ import {
   InputGroup,
   Input,
   Button,
-  InputLeftElement
 } from "@chakra-ui/react"
 
 import {
-  FiTrendingUp,
   FiX,
   FiMenu,
   FiUploadCloud,
@@ -41,16 +38,6 @@ import {
 
 } from "react-icons/fi"
 
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-} from "@chakra-ui/react"
 
 
 export default function SidebarWithHeader({ children, setSideBar, modalState, tokenConsumed, setTokenConsumed }) {
@@ -85,7 +72,7 @@ export default function SidebarWithHeader({ children, setSideBar, modalState, to
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
-      <MobileNav onOpen={onOpen} activeIndex={activeIndex} />
+      <MobileNav modalState = {() => {modalState();}}onOpen={onOpen} activeIndex={activeIndex} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
       </Box>
@@ -94,8 +81,6 @@ export default function SidebarWithHeader({ children, setSideBar, modalState, to
 }
 
 const SidebarContent = ({ onClose, modalState, activeIndex, setActiveIndex, ...rest }) => {
-
-
 
   const [inputState, setInputState] = useState(false);
   const [index, setIndex] = useState('');
@@ -196,14 +181,14 @@ const SidebarContent = ({ onClose, modalState, activeIndex, setActiveIndex, ...r
 
       )}
 
-
+{/* 
       <Button size='sm' type='text' mr={"6%"} ml={"6%"} mt={"3%"} position={'absolute'} left = {'15px'} bottom = {'50px'} onClick = {() => {console.log("Something here", tokenConsumed)}}>
         Token : {tokenConsumed}
-      </Button>
+      </Button> */}
 
-      <Button size='sm' type='text' mr={"6%"} ml={"6%"} mt={"3%"} left = {'15px'} bottom = {'10px'} position={'absolute'}>
+      {/* <Button size='sm' type='text' mr={"6%"} ml={"6%"} mt={"3%"} left = {'15px'} bottom = {'10px'} position={'absolute'}>
         Cost : Rs. {costConsumed.toFixed(3)}
-      </Button>
+      </Button> */}
 
     </Box>
   )
@@ -269,7 +254,7 @@ const NavItem = ({ icon, active, children, setInputState, ...rest }) => {
   )
 }
 
-const MobileNav = ({ onOpen, activeIndex, ...rest }) => {
+const MobileNav = ({ onOpen, modalState, activeIndex, ...rest }) => {
 
   const [fileList, setFilesList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -366,8 +351,8 @@ const MobileNav = ({ onOpen, activeIndex, ...rest }) => {
           aria-label="open menu"
           icon={<FiBell />}
         />
-        <Button for="file" isLoading = {isLoading} onClick={() => { handleFiles() }} rightIcon={<FiUploadCloud />}>{`Add pdfs to ${activeIndex.replaceAll('_', ' ')}`}</Button>
-        <Input type='file' maxWidth={"250px"} id="filesToUpload" multiple onInput={(e) => { setFilesList(e.target.files) }} />
+        <Button for="file" isLoading = {isLoading} onClick={() => { modalState(); }} rightIcon={<FiUploadCloud />}>{`Add pdfs to ${activeIndex.replaceAll('_', ' ')}`}</Button>
+        {/* <Input type='file' maxWidth={"250px"} id="filesToUpload" multiple onInput={(e) => { setFilesList(e.target.files) }} /> */}
         <Flex alignItems={"center"}>
           <Menu>
             <MenuButton

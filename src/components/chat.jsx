@@ -12,20 +12,23 @@ import {
     Box,
 } from '@chakra-ui/react'
 
-import { Input, Heading, InputGroup, InputLeftElement, InputRightElement, Text } from '@chakra-ui/react';
+import { Input, Heading, InputGroup, InputLeftElement, InputRightElement, Text, Spacer } from '@chakra-ui/react';
 import {
     FiSend,
-    FiUser
+    FiUser,
+    FiX
 
 } from "react-icons/fi"
+
+import { IconButton } from '@chakra-ui/react'
 
 import Typewriter from "typewriter-effect";
 
 
-function Chat({sideBar}) {
+function Chat({ sideBar }) {
 
     const [inputState, setInputState] = useState(false)
-    
+
     const [tokenConsumed, setTokenConsumed] = useState(0)
     const [costConsumed, setCostConsumed] = useState(0)
 
@@ -86,41 +89,41 @@ function Chat({sideBar}) {
     }, [])
 
 
-    
-    useEffect(() => {if(tokenConsumed>0){localStorage.setItem('token-consumed', tokenConsumed)}}, [tokenConsumed]);
-    useEffect(() => {if(costConsumed>0){localStorage.setItem('cost-consumed', costConsumed)}}, [costConsumed]);
+
+    useEffect(() => { if (tokenConsumed > 0) { localStorage.setItem('token-consumed', tokenConsumed) } }, [tokenConsumed]);
+    useEffect(() => { if (costConsumed > 0) { localStorage.setItem('cost-consumed', costConsumed) } }, [costConsumed]);
 
 
-    useEffect(() => {setTokenConsumed(parseInt(localStorage.getItem('token-consumed')))}, []);
-    useEffect(() => {setCostConsumed(parseFloat(localStorage.getItem('cost-consumed')))}, []);
+    useEffect(() => { setTokenConsumed(parseInt(localStorage.getItem('token-consumed'))) }, []);
+    useEffect(() => { setCostConsumed(parseFloat(localStorage.getItem('cost-consumed'))) }, []);
 
 
     React.useEffect(() => {
-        if(response.length > 0){
+        if (response.length > 0) {
             localStorage.setItem('chat-history', JSON.stringify(response));
         }
-      }, [response]);
+    }, [response]);
 
 
     const sendQuestion = () => {
-        if(question === ''){return;}
+        if (question === '') { return; }
 
         axios.get('http://127.0.0.1:5000/createResponse', {
             params: {
                 question: question,
-                index : sideBar,
+                index: sideBar,
             }
         })
-        .then((resp) => {
-            setResponse([
-                { question: question, answer: resp['data']['answer'], state: 1, source_documents: resp['data']['source_documents'], metadata: resp['data']['metadata'], index : sideBar, cost : resp['data']['token']['total_cost'], token : resp['data']['token']['total_tokens'] }, ...response
-            ])
-            setCostConsumed(costConsumed+resp['data']['token']['total_cost']*84)
-            setTokenConsumed(tokenConsumed+resp['data']['token']['total_tokens'])
-        })
-        .catch((error)=>{
-            alert("Unable to process queries, please try again later");
-        });
+            .then((resp) => {
+                setResponse([
+                    { question: question, answer: resp['data']['answer'], state: 1, source_documents: resp['data']['source_documents'], metadata: resp['data']['metadata'], index: sideBar, cost: resp['data']['token']['total_cost'], token: resp['data']['token']['total_tokens'] }, ...response
+                ])
+                setCostConsumed(costConsumed + resp['data']['token']['total_cost'] * 84)
+                setTokenConsumed(tokenConsumed + resp['data']['token']['total_tokens'])
+            })
+            .catch((error) => {
+                alert("Unable to process queries, please try again later");
+            });
     }
 
 
@@ -128,14 +131,14 @@ function Chat({sideBar}) {
 
     const handleResponse = () => {
         setResponse([
-            { question: question, answer: '', state: 1, source_documents: [], metadata: {}, index : sideBar, cost : 0, token : 0  }, ...response
+            { question: question, answer: '', state: 1, source_documents: [], metadata: {}, index: sideBar, cost: 0, token: 0 }, ...response
         ])
         sendQuestion(question)
     }
 
     return (
-        <div style={{ paddingLeft: "30px", paddingRight: "30px"}}>
-            <Heading w="100%" textAlign={'center'} fontWeight="normal" mb="3.5%">
+        <div style={{ paddingLeft: "30px", paddingRight: "30px" }}>
+            <Heading textAlign={'center'} fontWeight="normal" mb="3.5%">
                 {
                     <Typewriter
                         onInit={(typewriter) => {
@@ -149,7 +152,15 @@ function Chat({sideBar}) {
                 }
             </Heading>
 
-            <div alignContents={'center'} style={{ outline: "0.25px solid #ccc", minHeight: "250px", borderRadius: "16px", padding: "10px", backgroundColor : "var(--chakra-colors-gray-200)" }}>
+            <Button size='sm' type='text' mr={"6%"} ml={"0%"} mt={"3%"} position={'absolute'} left={'15px'} bottom={'50px'} onClick={() => { console.log("Something here", tokenConsumed) }}>
+                Token too much : {tokenConsumed}
+            </Button>
+
+            <Button size='sm' type='text' mr={"6%"} ml={"0%"} mt={"3%"} left={'15px'} bottom={'10px'} position={'absolute'}>
+                Cost : Rs. {costConsumed.toFixed(3)}
+            </Button>
+
+            <div alignContents={'center'} style={{ outline: "0.25px solid #ccc", minHeight: "250px", borderRadius: "16px", padding: "10px", backgroundColor: "var(--chakra-colors-gray-200)" }}>
                 <InputGroup>
                     <InputLeftElement pointerEvents='none'>
                         <FiUser />
@@ -159,11 +170,11 @@ function Chat({sideBar}) {
                         <FiSend />
                     </InputRightElement>
 
-                    <Input placeholder={`Ask a question in ${sideBar.replaceAll('_', ' ')}.. ?`} size='md' onKeyDown = {(e) => {if(e.key === "Enter"){handleResponse()}}} onChange={(e) => { setQuestion(e.target.value) }} disabled={inputState} style = {{outline: "0.25px solid #ccc",borderRadius: "16px", backgroundColor : "var(--chakra-colors-gray-100)" }}/>
+                    <Input placeholder={`Ask a question in ${sideBar.replaceAll('_', ' ')}.. ?`} size='md' onKeyDown={(e) => { if (e.key === "Enter") { handleResponse() } }} onChange={(e) => { setQuestion(e.target.value) }} disabled={inputState} style={{ outline: "0.25px solid #ccc", borderRadius: "16px", backgroundColor: "var(--chakra-colors-gray-100)" }} />
                 </InputGroup>
 
 
-                <div style={{ overflowY: "scroll", maxHeight: "600px" }} >
+                <div style={{ overflowY: "scroll", maxHeight: "475px" }} >
 
                     {response.map(
                         (key, idx) => {
@@ -171,7 +182,7 @@ function Chat({sideBar}) {
 
                                 return (
                                     <>
-                                        <Heading fontWeight="medium" fontSize={18} mt={"2.5%"} mb = {"2.5%"} textAlign={"left"}>Q. {key.question} </Heading>
+                                        <Heading fontWeight="medium" fontSize={18} mt={"2.5%"} mb={"2.5%"} textAlign={"left"}>Q. {key.question} </Heading>
                                         <Typewriter
                                             delay="300"
                                             onInit={(typewriter) => {
@@ -187,13 +198,13 @@ function Chat({sideBar}) {
 
                                                         var toStore = [...response];
                                                         toStore[idx]['state'] = 0;
-                                                        
+
                                                         setResponse(toStore)
                                                     })
                                                     .start();
                                             }}
                                         />
-                                        <Accordion allowToggle mt = {"2.5%"}>
+                                        <Accordion allowToggle mt={"2.5%"}>
                                             <AccordionItem>
                                                 <h2>
                                                     <AccordionButton>
@@ -205,11 +216,10 @@ function Chat({sideBar}) {
                                                 </h2>
                                                 <AccordionPanel pb={4}>
 
-                                                     {
-                                                        key['source_documents'].map((doc, idx) => {
-                                                            return <ul> {doc['content'].slice(0, 400)+'...' }</ul>
-                                                        })
-                                                    }   
+                                                    {
+                                                        ('source_documents' in key ? key['source_documents'].length > 0 ? key['source_documents'][0]['content'] : '' : '')
+
+                                                    }
                                                 </AccordionPanel>
                                             </AccordionItem>
                                         </Accordion>
@@ -218,19 +228,37 @@ function Chat({sideBar}) {
                                     </>
                                 )
                             }
-                            else if(key.index === sideBar){
+                            else if (key.index === sideBar) {
                                 return (
                                     <>
-                                        <Heading fontWeight="medium" fontSize={18} mt={"2.5%"} textAlign={"left"}>
-                                            Q. {key.question} 
+                                        <Heading fontWeight="medium" fontSize={18} mt={"2.5%"} textAlign={"left"} width={"100%"} display={"flex"}>
+                                            <Text>
+                                                Q. {key.question}
+                                            </Text>
 
                                             <Button ml={"3"} size={'md'}>
-                                                Rs. {(key.cost*84).toFixed(3)}
+                                                Rs. {(key.cost * 84).toFixed(3)}
                                             </Button>
 
-                                            <Button ml={"3"} mr={"3"} size = {'md'}>
+                                            <Button ml={"3"} mr={"3"} size={'md'}>
                                                 token : {key.token}
                                             </Button>
+                                            <Spacer />
+
+                                            <IconButton
+                                                backgroundColor='rgb(107 176 233 / 20%)'
+                                                colorScheme='red'
+                                                aria-label='remove question'
+                                                onClick={() => {
+                                                    response[idx]['index'] = -1;
+
+                                                    var toStore = [...response];
+                                                    toStore[idx]['index'] = -1;
+
+                                                    setResponse(toStore)
+                                                }}
+                                                icon={<FiX />}
+                                            />
 
                                         </Heading>
                                         <Text size="sm" m={"2%"}>{key.answer}</Text>
@@ -247,9 +275,11 @@ function Chat({sideBar}) {
                                                 </h2>
                                                 <AccordionPanel pb={4}>
                                                     {
-                                                        key['source_documents'].map((doc, idx) => {
-                                                            return <li> {doc['content'].slice(0, 400)+'...' }</li>
-                                                        })
+                                                        // key['source_documents'].map((doc, idx) => {
+                                                        //     return <li> {doc['content'].slice(0, 400) + '...'}</li>
+                                                        // })
+                                                        ('source_documents' in key ? key['source_documents'].length > 0 ? key['source_documents'][0]['content'] : '' : '')
+
                                                     }
                                                 </AccordionPanel>
                                             </AccordionItem>
